@@ -192,6 +192,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     _preferredWeekdayHeight = FSCalendarAutomaticDimension;
     _preferredRowHeight     = FSCalendarAutomaticDimension;
     _preferredPadding       = FSCalendarAutomaticDimension;
+    _rowHeightMultiplier    = 1.0;
     _lineHeightMultiplier    = 1.0;
     
     _scrollDirection = FSCalendarScrollDirectionHorizontal;
@@ -306,18 +307,19 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-
+    
     _supressEvent = YES;
     
     if (_needsAdjustingViewFrame) {
         
-        if (CGSizeEqualToSize(_animator.cachedMonthSize, CGSizeZero)) {
-            _animator.cachedMonthSize = self.frame.size;
-        }
-        
         BOOL needsAdjustingBoundingRect = (self.scope == FSCalendarScopeMonth) &&
                                           (self.placeholderType != FSCalendarPlaceholderTypeFillSixRows) &&
                                           !self.hasValidateVisibleLayout;
+        
+        if (CGSizeEqualToSize(_animator.cachedMonthSize, CGSizeZero)) {
+            _animator.cachedMonthSize = self.frame.size;
+            needsAdjustingBoundingRect = true;
+        }
         
         if (_scopeHandle) {
             CGFloat scopeHandleHeight = self.animator.cachedMonthSize.height*0.08;
@@ -1038,8 +1040,9 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
         }
         if (!self.floatingMode) {
             _preferredRowHeight = (_placeholderType == FSCalendarPlaceholderTypeFillSixRows) ? (contentHeight-padding*2)/6.0 : FSCalendarStandardRowHeight;
+            _preferredRowHeight *= _rowHeightMultiplier;
         } else {
-            _preferredRowHeight = FSCalendarStandardRowHeight*MAX(1, FSCalendarDeviceIsIPad*1.5)*_lineHeightMultiplier;
+            _preferredRowHeight = FSCalendarStandardRowHeight*MAX(1, FSCalendarDeviceIsIPad*1.5)*_rowHeightMultiplier;
         }
     }
     return _preferredRowHeight;
@@ -1143,6 +1146,11 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
             [_collectionView reloadData];
         }
     }
+}
+
+- (void)setRowHeightMultiplier:(CGFloat)rowHeightMultiplier
+{
+    _rowHeightMultiplier = MAX(0, rowHeightMultiplier);
 }
 
 - (void)setLineHeightMultiplier:(CGFloat)lineHeightMultiplier

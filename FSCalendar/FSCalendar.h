@@ -356,6 +356,13 @@ IB_DESIGNABLE
  */
 @property (assign, nonatomic) IBInspectable CGFloat lineHeightMultiplier;
 
+
+/**
+ * The multiplier of line day row. Default is 1.0;
+ */
+@property (assign, nonatomic) IBInspectable CGFloat rowHeightMultiplier;
+
+
 /**
  * The calendar appearance used to control the global fonts、colors .etc
  */
