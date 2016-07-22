@@ -1392,6 +1392,50 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     return nil;
 }
 
+- (FSCalendarCellWeekHighlightMode) weekHiglightModeFor:(NSIndexPath *)indexPath
+{
+    if (self.animator.transition == FSCalendarTransitionWeekToMonth && self.animator.state == FSCalendarTransitionStateInProgress) {
+        return [self weekHiglightModeFor:indexPath scope:FSCalendarScopeMonth];
+    }
+    return [self weekHiglightModeFor:indexPath scope:_scope];
+}
+
+- (FSCalendarCellWeekHighlightMode) weekHiglightModeFor:(NSIndexPath *)indexPath  scope:(FSCalendarScope)scope {
+    
+    NSUInteger rows;
+    
+    switch (scope) {
+        case FSCalendarScopeMonth: {
+            switch (_collectionViewLayout.scrollDirection) {
+                case UICollectionViewScrollDirectionHorizontal: {
+                    rows = indexPath.item % 6;
+                    NSUInteger columns = indexPath.item / 6;
+                    NSUInteger daysOffset = 7*rows + columns;
+                    rows = daysOffset% 7;
+                    break;
+                }
+                case UICollectionViewScrollDirectionVertical: {
+                    rows = indexPath.item % 7;
+                    break;
+                }
+            }
+            break;
+        }
+        case FSCalendarScopeWeek: {
+            rows = indexPath.item % 7;
+            break;
+        }
+    }
+
+    if (rows == 0) {
+        return FSCalendarCellWeekHighlightModeLeft;
+    }else if (rows == 6) {
+        return FSCalendarCellWeekHighlightModeRight;
+    }else {
+        return FSCalendarCellWeekHighlightModeMiddle;
+    }
+}
+
 - (NSDate *)dateForIndexPath:(NSIndexPath *)indexPath
 {
     if (self.animator.transition == FSCalendarTransitionWeekToMonth && self.animator.state == FSCalendarTransitionStateInProgress) {
@@ -1625,6 +1669,13 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     cell.subtitle  = [self subtitleForDate:cell.date];
     cell.dateIsSelected = [_selectedDates containsObject:cell.date];
     cell.dateIsToday = [self isDateInToday:cell.date];
+    if ([self higlightWeekForDate:cell.date]) {
+        [cell.weekHiglightLayer setHidden:NO];
+        cell.weekHighlightMode = [self weekHiglightModeFor:indexPath];
+    }else {
+        [cell.weekHiglightLayer setHidden:YES];
+    }
+    
     switch (_scope) {
         case FSCalendarScopeMonth: {
             NSDate *firstPage = [self beginingOfMonthOfDate:_minimumDate];
@@ -1956,6 +2007,15 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 #else
     return _appearance.fakeSubtitles ? @"test" : nil;
 #endif
+}
+
+- (BOOL)higlightWeekForDate:(NSDate *)date
+{
+    if (_dataSource && [_dataSource respondsToSelector:@selector(calendar:higlightDaysFor:)]) {
+        NSUInteger weekOfYear = [[[self calendar] components:NSCalendarUnitWeekOfYear fromDate:date] weekOfYear];
+        return [_dataSource calendar:self higlightDaysFor:weekOfYear];
+    }
+    return NO;
 }
 
 - (UIImage *)imageForDate:(NSDate *)date

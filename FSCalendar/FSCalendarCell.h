@@ -12,6 +12,12 @@
 
 @interface FSCalendarCell : UICollectionViewCell
 
+typedef NS_ENUM(NSUInteger, FSCalendarCellWeekHighlightMode) {
+    FSCalendarCellWeekHighlightModeLeft = -1,
+    FSCalendarCellWeekHighlightModeMiddle = 0,
+    FSCalendarCellWeekHighlightModeRight = 1
+};
+
 @property (weak, nonatomic) FSCalendar *calendar;
 @property (weak, nonatomic) FSCalendarAppearance *appearance;
 
@@ -20,6 +26,8 @@
 @property (weak, nonatomic) UIImageView *imageView;
 
 @property (weak, nonatomic) CAShapeLayer *shapeLayer;
+@property (weak, nonatomic) CAShapeLayer *weekHiglightLayer;
+
 @property (weak, nonatomic) FSCalendarEventIndicator *eventIndicator;
 
 @property (strong, nonatomic) NSDate   *date;
@@ -47,6 +55,7 @@
 @property (strong, nonatomic) UIColor *preferredBorderSelectionColor;
 @property (strong, nonatomic) id preferredEventColor;
 @property (assign, nonatomic) FSCalendarCellShape preferredCellShape;
+@property (assign, nonatomic) FSCalendarCellWeekHighlightMode weekHighlightMode;
 
 - (void)invalidateTitleFont;
 - (void)invalidateSubtitleFont;
@@ -56,7 +65,9 @@
 - (void)invalidateBorderColors;
 - (void)invalidateFillColors;
 - (void)invalidateEventColors;
+- (void)invalidateWeekColors;
 - (void)invalidateCellShapes;
+- (void)invalidateWeekHiglightMode;
 
 - (void)invalidateImage;
 

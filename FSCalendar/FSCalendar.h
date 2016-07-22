@@ -78,6 +78,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable UIImage *)calendar:(FSCalendar *)calendar imageForDate:(NSDate *)date;
 
 /**
+ * Asks the dataSource whether days should be higlighted for specific week.
+ */
+- (BOOL)calendar:(FSCalendar *)calendar higlightDaysFor:(NSUInteger)weekOfYear;
+
+/**
  * Asks the dataSource the minimum date to display.
  */
 - (NSDate *)minimumDateForCalendar:(FSCalendar *)calendar;

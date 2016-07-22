@@ -37,9 +37,10 @@ UIKIT_EXTERN NSInteger const FSCalendarDefaultHourComponent;
 #endif
 
 #define FSCalendarStandardSelectionColor   FSColorRGBA(31,119,219,1.0)
-#define FSCalendarStandardTodayColor       FSColorRGBA(198,51,42 ,1.0)
-#define FSCalendarStandardTitleTextColor   FSColorRGBA(14,69,221 ,1.0)
+#define FSCalendarStandardTodayColor       FSColorRGBA(198,51,42,1.0)
+#define FSCalendarStandardTitleTextColor   FSColorRGBA(14,69,221,1.0)
 #define FSCalendarStandardEventDotColor    FSColorRGBA(31,119,219,0.75)
+#define FSCalendarStandardWeekColor        FSColorRGBA(240,244,245,1.0)
 
 #define FSCalendarStandardSeparatorColor   [[UIColor lightGrayColor] colorWithAlphaComponent:0.25]
 #define FSCalendarStandardScopeHandleColor [[UIColor lightGrayColor] colorWithAlphaComponent:0.50]

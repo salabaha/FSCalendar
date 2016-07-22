@@ -57,6 +57,7 @@
 - (void)invalidateBorderColors;
 - (void)invalidateFillColors;
 - (void)invalidateEventColors;
+- (void)invalidateWeekColors;
 - (void)invalidateCellShapes;
 
 @end
@@ -112,6 +113,7 @@
         
         _cellShape = FSCalendarCellShapeCircle;
         _eventColor = FSCalendarStandardEventDotColor;
+        _weekColor = FSCalendarStandardWeekColor;
         
         _borderColors = [NSMutableDictionary dictionaryWithCapacity:2];
         
@@ -422,6 +424,14 @@
     }
 }
 
+-(void)setWeekColor:(UIColor *)weekColor
+{
+    if (![_weekColor isEqual:weekColor]) {
+        _weekColor = weekColor;
+        [self invalidateWeekColors];
+    }
+}
+
 - (void)setBorderDefaultColor:(UIColor *)color
 {
     if (color) {
@@ -599,6 +609,11 @@
 }
 
 - (void)invalidateEventColors
+{
+    [_calendar.collectionView.visibleCells makeObjectsPerformSelector:_cmd];
+}
+
+- (void)invalidateWeekColors
 {
     [_calendar.collectionView.visibleCells makeObjectsPerformSelector:_cmd];
 }

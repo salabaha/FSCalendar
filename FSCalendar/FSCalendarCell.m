@@ -32,9 +32,10 @@
     if (self) {
         
         _needsAdjustingViewFrame = YES;
-        
+    
         UILabel *label;
         CAShapeLayer *shapeLayer;
+        CAShapeLayer *weekHiglightLayer;
         UIImageView *imageView;
         FSCalendarEventIndicator *eventIndicator;
         
@@ -56,6 +57,13 @@
         [self.contentView.layer insertSublayer:shapeLayer below:_titleLabel.layer];
         self.shapeLayer = shapeLayer;
         
+        weekHiglightLayer = [CAShapeLayer layer];
+        weekHiglightLayer.backgroundColor = [UIColor clearColor].CGColor;
+        
+        [self.contentView.layer insertSublayer:weekHiglightLayer atIndex:0];
+        self.weekHiglightLayer = weekHiglightLayer;
+        
+        
         eventIndicator = [[FSCalendarEventIndicator alloc] initWithFrame:CGRectZero];
         eventIndicator.backgroundColor = [UIColor clearColor];
         eventIndicator.hidden = YES;
@@ -74,22 +82,51 @@
     return self;
 }
 
-- (void)setBounds:(CGRect)bounds
+-(UIBezierPath *) weekHiglightPathForMode:(FSCalendarCellWeekHighlightMode) mode
 {
-    [super setBounds:bounds];
-    CGFloat titleHeight = self.bounds.size.height*5.0/6.0;
-    CGFloat diameter = MIN(self.bounds.size.height*5.0/6.0,self.bounds.size.width);
-    diameter = diameter > FSCalendarStandardCellDiameter ? (diameter - (diameter-FSCalendarStandardCellDiameter)*0.5) : diameter;
-    _shapeLayer.frame = CGRectMake((self.bounds.size.width-diameter)/2,
-                                   (titleHeight-diameter)/2,
-                                   diameter,
-                                   diameter);
-    _shapeLayer.borderWidth = 1.0;
-    _shapeLayer.borderColor = [UIColor clearColor].CGColor;
+    UIBezierPath *path;
+    switch (mode) {
+        case FSCalendarCellWeekHighlightModeLeft: {
+            path = [UIBezierPath bezierPathWithRoundedRect:[self weekHiglightPathFrameForMode: mode]
+                                               byRoundingCorners:UIRectCornerTopLeft|UIRectCornerBottomLeft
+                                                     cornerRadii:CGSizeMake(self.contentView.fs_width / 2, self.contentView.fs_height / 2)];
+            break;
+        }
+            
+        case FSCalendarCellWeekHighlightModeMiddle:
+            path = [UIBezierPath bezierPathWithRect:[self weekHiglightPathFrameForMode: mode]];
+            break;
+            
+        case FSCalendarCellWeekHighlightModeRight:{
+            path = [UIBezierPath bezierPathWithRoundedRect:[self weekHiglightPathFrameForMode: mode]
+                                               byRoundingCorners:UIRectCornerTopRight|UIRectCornerBottomRight
+                                                     cornerRadii:CGSizeMake(self.contentView.fs_width / 2, self.contentView.fs_height / 2)];
+            break;
+        }
+    }
+
+    return path;
+}
+
+-(CGRect)weekHiglightPathFrameForMode:(FSCalendarCellWeekHighlightMode) mode
+{
+    CGFloat offset = 8.0;
+    CGRect frame = self.contentView.frame;
     
-    CGFloat eventSize = _shapeLayer.frame.size.height/6.0;
-    _eventIndicator.frame = CGRectMake(0, CGRectGetMaxY(_shapeLayer.frame)+eventSize*0.17, bounds.size.width, eventSize*0.83);
-    _imageView.frame = self.contentView.bounds;
+    switch (mode) {
+        case FSCalendarCellWeekHighlightModeLeft:
+            frame.origin.x += offset;
+            break;
+
+        case FSCalendarCellWeekHighlightModeMiddle:
+            break;
+            
+        case FSCalendarCellWeekHighlightModeRight:
+            frame.origin.x -= offset;
+            break;
+    }
+    
+    return frame;
 }
 
 - (void)layoutSubviews
@@ -139,6 +176,23 @@
 
 - (void)configureCell
 {
+    CGFloat titleHeight = self.bounds.size.height*5.0/6.0;
+    CGFloat diameter = MIN(self.bounds.size.height*5.0/6.0,self.bounds.size.width);
+    diameter = diameter > FSCalendarStandardCellDiameter ? (diameter - (diameter-FSCalendarStandardCellDiameter)*0.5) : diameter;
+    
+    CGRect frame = CGRectMake((self.bounds.size.width-diameter)/2,
+                              (titleHeight-diameter)/2 + _appearance.titleVerticalOffset,
+                              diameter,
+                              diameter);
+    
+    _shapeLayer.frame = frame;
+    _shapeLayer.borderWidth = 1.0;
+    _shapeLayer.borderColor = [UIColor clearColor].CGColor;
+    
+    CGFloat eventSize = _shapeLayer.frame.size.height/6.0;
+    _eventIndicator.frame = CGRectMake(0, CGRectGetMaxY(_shapeLayer.frame)+eventSize*0.17, self.contentView.bounds.size.width, eventSize*0.83);
+    _imageView.frame = self.contentView.bounds;
+    
     if (self.dateIsPlaceholder) {
         if (self.calendar.placeholderType == FSCalendarPlaceholderTypeNone) {
             self.contentView.hidden = YES;
@@ -312,12 +366,22 @@
     _eventIndicator.color = self.preferredEventColor ?: _appearance.eventColor;
 }
 
+- (void)invalidateWeekColors
+{
+    _weekHiglightLayer.fillColor = _appearance.weekColor.CGColor;
+}
+
 - (void)invalidateCellShapes
 {
     CGPathRef path = self.cellShape == FSCalendarCellShapeCircle ?
     [UIBezierPath bezierPathWithOvalInRect:_shapeLayer.bounds].CGPath :
     [UIBezierPath bezierPathWithRect:_shapeLayer.bounds].CGPath;
     _shapeLayer.path = path;
+}
+
+-(void)invalidateWeekHiglightMode
+{
+    _weekHiglightLayer.path = [self weekHiglightPathForMode: _weekHighlightMode].CGPath;
 }
 
 - (void)invalidateImage
@@ -377,6 +441,8 @@
         [self invalidateTitleTextColor];
         [self invalidateSubtitleTextColor];
         [self invalidateEventColors];
+        [self invalidateWeekColors];
+        [self invalidateWeekHiglightMode];
     }
 }
 
@@ -396,6 +462,13 @@
     if (_needsAdjustingViewFrame != needsAdjustingViewFrame) {
         _needsAdjustingViewFrame = needsAdjustingViewFrame;
         _eventIndicator.needsAdjustingViewFrame = needsAdjustingViewFrame;
+    }
+}
+
+-(void)setWeekHighlightMode:(FSCalendarCellWeekHighlightMode)weekHighlightMode {
+    if (_weekHighlightMode != weekHighlightMode) {
+        _weekHighlightMode = weekHighlightMode;
+        [self invalidateWeekHiglightMode];
     }
 }
 

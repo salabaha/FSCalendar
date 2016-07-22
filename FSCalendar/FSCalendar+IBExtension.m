@@ -25,7 +25,19 @@
     return self.appearance.adjustsFontSizeToFitContentSize;
 }
 
-#pragma mark -  eventColor
+#pragma mark - weekColor
+
+- (void)setWeekColor:(UIColor *)weekColor
+{
+    self.appearance.weekColor = weekColor;
+}
+
+- (UIColor *)weekColor
+{
+    return self.appearance.weekColor;
+}
+
+#pragma mark - eventColor
 
 - (void)setEventColor:(UIColor *)eventColor
 {
