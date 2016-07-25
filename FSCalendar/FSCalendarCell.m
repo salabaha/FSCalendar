@@ -110,8 +110,9 @@
 
 -(CGRect)weekHiglightPathFrameForMode:(FSCalendarCellWeekHighlightMode) mode
 {
-    CGFloat offset = 8.0;
+    CGFloat offset = 5.0;
     CGRect frame = self.contentView.frame;
+    frame.size.height -= 8.0;
     
     switch (mode) {
         case FSCalendarCellWeekHighlightModeLeft:
