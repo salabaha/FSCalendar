@@ -57,7 +57,7 @@
 - (void)invalidateBorderColors;
 - (void)invalidateFillColors;
 - (void)invalidateEventColors;
-- (void)invalidateWeekColors;
+- (void)invalidateWeekLineColors;
 - (void)invalidateCellShapes;
 
 @end
@@ -117,6 +117,8 @@
         _eventSelectionColor = FSCalendarStandardEventDotColor;
         
         _borderColors = [NSMutableDictionary dictionaryWithCapacity:2];
+        
+        _weekLineHeight = FSCalendarAutomaticDimension;
         
     }
     return self;
@@ -234,6 +236,14 @@
         _eventOffset = eventOffset;
         [_calendar.collectionView.visibleCells setValue:@YES forKey:@"needsAdjustingViewFrame"];
         [_calendar.collectionView.visibleCells makeObjectsPerformSelector:@selector(setNeedsLayout)];
+    }
+}
+
+-(void)setWeekLineHeight:(CGFloat)weekLineHeight
+{
+    if (_weekLineHeight != weekLineHeight) {
+        _weekLineHeight = weekLineHeight;
+        [self invalidateWeekLineHeight];
     }
 }
 
@@ -449,7 +459,7 @@
 {
     if (![_weekColor isEqual:weekColor]) {
         _weekColor = weekColor;
-        [self invalidateWeekColors];
+        [self invalidateWeekLineColors];
     }
 }
 
@@ -634,7 +644,7 @@
     [_calendar.collectionView.visibleCells makeObjectsPerformSelector:_cmd];
 }
 
-- (void)invalidateWeekColors
+- (void)invalidateWeekLineColors
 {
     [_calendar.collectionView.visibleCells makeObjectsPerformSelector:_cmd];
 }
@@ -660,6 +670,11 @@
 }
 
 - (void)invalidateSubtitleTextColor
+{
+    [_calendar.collectionView.visibleCells makeObjectsPerformSelector:_cmd];
+}
+
+- (void)invalidateWeekLineHeight
 {
     [_calendar.collectionView.visibleCells makeObjectsPerformSelector:_cmd];
 }

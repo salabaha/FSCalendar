@@ -107,6 +107,11 @@ typedef NS_OPTIONS(NSUInteger, FSCalendarCaseOptions) {
 @property (strong, nonatomic) UIColor  *weekColor;
 
 /**
+ * The height of week line.
+ */
+@property (assign, nonatomic) CGFloat  weekLineHeight;
+
+/**
  * The color of weekday text.
  */
 @property (strong, nonatomic) UIColor  *weekdayTextColor;

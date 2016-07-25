@@ -1397,15 +1397,15 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     return nil;
 }
 
-- (FSCalendarCellWeekHighlightMode) weekHiglightModeFor:(NSIndexPath *)indexPath
+- (FSCalendarCellWeekLineMode)weekLineModeFor:(NSIndexPath *)indexPath
 {
     if (self.animator.transition == FSCalendarTransitionWeekToMonth && self.animator.state == FSCalendarTransitionStateInProgress) {
-        return [self weekHiglightModeFor:indexPath scope:FSCalendarScopeMonth];
+        return [self weekLineModeFor:indexPath scope:FSCalendarScopeMonth];
     }
-    return [self weekHiglightModeFor:indexPath scope:_scope];
+    return [self weekLineModeFor:indexPath scope:_scope];
 }
 
-- (FSCalendarCellWeekHighlightMode) weekHiglightModeFor:(NSIndexPath *)indexPath  scope:(FSCalendarScope)scope {
+- (FSCalendarCellWeekLineMode)weekLineModeFor:(NSIndexPath *)indexPath scope:(FSCalendarScope)scope {
     
     NSUInteger rows;
     
@@ -1433,11 +1433,11 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     }
 
     if (rows == 0) {
-        return FSCalendarCellWeekHighlightModeLeft;
+        return FSCalendarCellWeekLineModeLeft;
     }else if (rows == 6) {
-        return FSCalendarCellWeekHighlightModeRight;
+        return FSCalendarCellWeekLineModeRight;
     }else {
-        return FSCalendarCellWeekHighlightModeMiddle;
+        return FSCalendarCellWeekLineModeMiddle;
     }
 }
 
@@ -1685,10 +1685,10 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     cell.dateIsSelected = [_selectedDates containsObject:cell.date];
     cell.dateIsToday = [self isDateInToday:cell.date];
     if ([self higlightWeekForDate:cell.date]) {
-        [cell.weekHiglightLayer setHidden:NO];
-        cell.weekHighlightMode = [self weekHiglightModeFor:indexPath];
+        [cell.weekLineLayer setHidden:NO];
+        cell.weekLineShapeMode = [self weekLineModeFor:indexPath];
     }else {
-        [cell.weekHiglightLayer setHidden:YES];
+        [cell.weekLineLayer setHidden:YES];
     }
     
     switch (_scope) {

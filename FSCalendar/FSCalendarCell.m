@@ -36,7 +36,7 @@
     
         UILabel *label;
         CAShapeLayer *shapeLayer;
-        CAShapeLayer *weekHiglightLayer;
+        CAShapeLayer *weekLineLayer;
         UIImageView *imageView;
         FSCalendarEventIndicator *eventIndicator;
         
@@ -58,11 +58,11 @@
         [self.contentView.layer insertSublayer:shapeLayer below:_titleLabel.layer];
         self.shapeLayer = shapeLayer;
         
-        weekHiglightLayer = [CAShapeLayer layer];
-        weekHiglightLayer.backgroundColor = [UIColor clearColor].CGColor;
+        weekLineLayer = [CAShapeLayer layer];
+        weekLineLayer.backgroundColor = [UIColor clearColor].CGColor;
         
-        [self.contentView.layer insertSublayer:weekHiglightLayer atIndex:0];
-        self.weekHiglightLayer = weekHiglightLayer;
+        [self.contentView.layer insertSublayer:weekLineLayer atIndex:0];
+        self.weekLineLayer = weekLineLayer;
         
         
         eventIndicator = [[FSCalendarEventIndicator alloc] initWithFrame:CGRectZero];
@@ -83,23 +83,23 @@
     return self;
 }
 
--(UIBezierPath *) weekHiglightPathForMode:(FSCalendarCellWeekHighlightMode) mode
+-(UIBezierPath *) weekLinePathForMode:(FSCalendarCellWeekLineMode) mode
 {
     UIBezierPath *path;
     switch (mode) {
-        case FSCalendarCellWeekHighlightModeLeft: {
-            path = [UIBezierPath bezierPathWithRoundedRect:[self weekHiglightPathFrameForMode: mode]
+        case FSCalendarCellWeekLineModeLeft: {
+            path = [UIBezierPath bezierPathWithRoundedRect:[self weekLinePathFrameForMode: mode]
                                                byRoundingCorners:UIRectCornerTopLeft|UIRectCornerBottomLeft
                                                      cornerRadii:CGSizeMake(self.contentView.fs_width / 2, self.contentView.fs_height / 2)];
             break;
         }
             
-        case FSCalendarCellWeekHighlightModeMiddle:
-            path = [UIBezierPath bezierPathWithRect:[self weekHiglightPathFrameForMode: mode]];
+        case FSCalendarCellWeekLineModeMiddle:
+            path = [UIBezierPath bezierPathWithRect:[self weekLinePathFrameForMode: mode]];
             break;
             
-        case FSCalendarCellWeekHighlightModeRight:{
-            path = [UIBezierPath bezierPathWithRoundedRect:[self weekHiglightPathFrameForMode: mode]
+        case FSCalendarCellWeekLineModeRight:{
+            path = [UIBezierPath bezierPathWithRoundedRect:[self weekLinePathFrameForMode: mode]
                                                byRoundingCorners:UIRectCornerTopRight|UIRectCornerBottomRight
                                                      cornerRadii:CGSizeMake(self.contentView.fs_width / 2, self.contentView.fs_height / 2)];
             break;
@@ -109,21 +109,29 @@
     return path;
 }
 
--(CGRect)weekHiglightPathFrameForMode:(FSCalendarCellWeekHighlightMode) mode
+-(CGRect)weekLinePathFrameForMode:(FSCalendarCellWeekLineMode) mode
 {
+    
     CGFloat offset = 5.0;
     CGRect frame = self.contentView.frame;
-    frame.size.height -= 8.0;
+    
+    if (self.appearance.weekLineHeight == FSCalendarAutomaticDimension) {
+        frame.size.height -= 8.0;
+    }else {
+        frame.size.height = self.appearance.weekLineHeight;
+    }
+    
+    frame.origin.y = (self.contentView.center.y) - (frame.size.height / 2) - 4;
     
     switch (mode) {
-        case FSCalendarCellWeekHighlightModeLeft:
+        case FSCalendarCellWeekLineModeLeft:
             frame.origin.x += offset;
             break;
 
-        case FSCalendarCellWeekHighlightModeMiddle:
+        case FSCalendarCellWeekLineModeMiddle:
             break;
             
-        case FSCalendarCellWeekHighlightModeRight:
+        case FSCalendarCellWeekLineModeRight:
             frame.origin.x -= offset;
             break;
     }
@@ -378,9 +386,9 @@
     _eventIndicator.color = self.colorsForEvents;
 }
 
-- (void)invalidateWeekColors
+- (void)invalidateWeekLineColors
 {
-    _weekHiglightLayer.fillColor = _appearance.weekColor.CGColor;
+    _weekLineLayer.fillColor = _appearance.weekColor.CGColor;
 }
 
 - (void)invalidateCellShapes
@@ -391,9 +399,14 @@
     _shapeLayer.path = path;
 }
 
--(void)invalidateWeekHiglightMode
+-(void)invalidateWeekLineShapeMode
 {
-    _weekHiglightLayer.path = [self weekHiglightPathForMode: _weekHighlightMode].CGPath;
+    _weekLineLayer.path = [self weekLinePathForMode: _weekLineShapeMode].CGPath;
+}
+
+-(void)invalidateWeekLineHeight
+{
+    [self invalidateWeekLineShapeMode];
 }
 
 - (void)invalidateImage
@@ -481,8 +494,8 @@
         [self invalidateTitleTextColor];
         [self invalidateSubtitleTextColor];
         [self invalidateEventColors];
-        [self invalidateWeekColors];
-        [self invalidateWeekHiglightMode];
+        [self invalidateWeekLineColors];
+        [self invalidateWeekLineShapeMode];
     }
 }
 
@@ -505,10 +518,10 @@
     }
 }
 
--(void)setWeekHighlightMode:(FSCalendarCellWeekHighlightMode)weekHighlightMode {
-    if (_weekHighlightMode != weekHighlightMode) {
-        _weekHighlightMode = weekHighlightMode;
-        [self invalidateWeekHiglightMode];
+-(void)setWeekLineShapeMode:(FSCalendarCellWeekLineMode)weekHighlightMode {
+    if (_weekLineShapeMode != weekHighlightMode) {
+        _weekLineShapeMode = weekHighlightMode;
+        [self invalidateWeekLineShapeMode];
     }
 }
 
