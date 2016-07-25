@@ -114,6 +114,7 @@
     
     CGFloat offset = 5.0;
     CGRect frame = self.contentView.frame;
+    frame.size.width += 1;
     
     if (self.appearance.weekLineHeight == FSCalendarAutomaticDimension) {
         frame.size.height -= 8.0;
