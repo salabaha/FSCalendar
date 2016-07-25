@@ -64,7 +64,6 @@
         [self.contentView.layer insertSublayer:weekLineLayer atIndex:0];
         self.weekLineLayer = weekLineLayer;
         
-        
         eventIndicator = [[FSCalendarEventIndicator alloc] initWithFrame:CGRectZero];
         eventIndicator.backgroundColor = [UIColor clearColor];
         eventIndicator.hidden = YES;
@@ -72,8 +71,9 @@
         self.eventIndicator = eventIndicator;
         
         imageView = [[UIImageView alloc] initWithFrame:CGRectZero];
-        imageView.contentMode = UIViewContentModeBottom|UIViewContentModeCenter;
-        [self.contentView addSubview:imageView];
+        imageView.contentMode = UIViewContentModeScaleAspectFit;
+        
+        [self.contentView insertSubview:imageView belowSubview:self.titleLabel];
         self.imageView = imageView;
         
         self.clipsToBounds = NO;
@@ -203,7 +203,18 @@
     _eventIndicator.color = self.colorsForEvents;
 
     _imageView.frame = self.contentView.bounds;
+    if (self.preferredImageSize.height > 0) {
+        _imageView.fs_height = self.preferredImageSize.height;
+    }
     
+    if (self.preferredImageSize.width > 0) {
+        _imageView.fs_width = self.preferredImageSize.width;
+    }
+    
+    _imageView.center = CGPointMake(
+                                    self.contentView.fs_width/2.0 + self.preferredImageOffset.x,
+                                    _imageView.center.y + self.preferredImageOffset.y
+                                    );
 
     if (self.dateIsPlaceholder) {
         if (self.calendar.placeholderType == FSCalendarPlaceholderTypeNone) {
@@ -270,12 +281,6 @@
                                            floor(self.contentView.fs_height*5.0/6.0)
                                           );
         }
-        
-        _imageView.center = CGPointMake(
-                                        self.contentView.fs_width/2.0 + self.preferredImageOffset.x,
-                                        _imageView.center.y + self.preferredImageOffset.y
-                                       );
-        
     }
     
     UIColor *textColor = self.colorForTitleLabel;
@@ -476,6 +481,11 @@
 - (CGPoint)preferredImageOffset
 {
     return CGPointEqualToPoint(_preferredImageOffset, CGPointZero) ? _appearance.imageOffset : _preferredImageOffset;
+}
+
+- (CGSize)preferredImageSize
+{
+    return CGSizeEqualToSize(_preferredImageSize, CGSizeZero) ? _appearance.imageSize : _preferredImageSize;
 }
 
 - (CGPoint)preferredEventOffset

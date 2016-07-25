@@ -42,6 +42,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 - (CGPoint)preferredTitleOffsetForDate:(NSDate *)date;
 - (CGPoint)preferredSubtitleOffsetForDate:(NSDate *)date;
 - (CGPoint)preferredImageOffsetForDate:(NSDate *)date;
+- (CGSize)preferredImageSizeForDate:(NSDate *)date;
 - (CGPoint)preferredEventOffsetForDate:(NSDate *)date;
 - (NSArray<UIColor *> *)preferredEventDefaultColorsForDate:(NSDate *)date;
 - (NSArray<UIColor *> *)preferredEventSelectionColorsForDate:(NSDate *)date;
@@ -1669,6 +1670,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     
     if (cell.image) {
         cell.preferredImageOffset = [self preferredImageOffsetForDate:cell.date];
+        cell.preferredImageSize = [self preferredImageSizeForDate:cell.date];
     }
     
     [cell setNeedsLayout];
@@ -2034,6 +2036,15 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
         return point;
     }
     return CGPointZero;
+}
+
+- (CGSize)preferredImageSizeForDate:(NSDate *)date
+{
+    if (self.delegateAppearance && [self.delegateAppearance respondsToSelector:@selector(calendar:appearance:imageSizeForDate:)]) {
+        CGSize size = [self.delegateAppearance calendar:self appearance:self.self.appearance imageSizeForDate:date];
+        return size;
+    }
+    return CGSizeZero;
 }
 
 - (CGPoint)preferredEventOffsetForDate:(NSDate *)date

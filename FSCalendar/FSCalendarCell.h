@@ -56,6 +56,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarCellWeekLineMode) {
 @property (assign, nonatomic) CGPoint preferredTitleOffset;
 @property (assign, nonatomic) CGPoint preferredSubtitleOffset;
 @property (assign, nonatomic) CGPoint preferredImageOffset;
+@property (assign, nonatomic) CGSize  preferredImageSize;
 @property (assign, nonatomic) CGPoint preferredEventOffset;
 
 @property (strong, nonatomic) NSArray<UIColor *> *preferredEventDefaultColors;

@@ -230,6 +230,15 @@
     }
 }
 
+-(void)setImageSize:(CGSize)imageSize
+{
+    if (!CGSizeEqualToSize(_imageSize, imageSize)) {
+        _imageSize = imageSize;
+        [_calendar.collectionView.visibleCells setValue:@YES forKey:@"needsAdjustingViewFrame"];
+        [_calendar.collectionView.visibleCells makeObjectsPerformSelector:@selector(setNeedsLayout)];
+    }
+}
+
 - (void)setEventOffset:(CGPoint)eventOffset
 {
     if (!CGPointEqualToPoint(_eventOffset, eventOffset)) {

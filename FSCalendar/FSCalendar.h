@@ -230,6 +230,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (CGPoint)calendar:(FSCalendar *)calendar appearance:(FSCalendarAppearance *)appearance imageOffsetForDate:(NSDate *)date;
 
 /**
+ * Asks the delegate for an size for image for the specific date.
+ */
+- (CGSize)calendar:(FSCalendar *)calendar appearance:(FSCalendarAppearance *)appearance imageSizeForDate:(NSDate *)date;
+
+/**
  * Asks the delegate for an offset for event dots for the specific date.
  */
 - (CGPoint)calendar:(FSCalendar *)calendar appearance:(FSCalendarAppearance *)appearance eventOffsetForDate:(NSDate *)date;

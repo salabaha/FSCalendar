@@ -92,6 +92,11 @@ typedef NS_OPTIONS(NSUInteger, FSCalendarCaseOptions) {
 @property (assign, nonatomic) CGPoint imageOffset;
 
 /**
+ * The size of the image from default position.
+ */
+@property (assign, nonatomic) CGSize imageSize;
+
+/**
  * The color of event dots.
  */
 @property (strong, nonatomic) UIColor  *eventDefaultColor;
