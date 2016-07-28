@@ -78,6 +78,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable UIImage *)calendar:(FSCalendar *)calendar imageForDate:(NSDate *)date;
 
 /**
+ * Asks the dataSource for an selected state image for the specific date.
+ */
+
+- (nullable UIImage *)calendar:(FSCalendar *)calendar selectedStateImageForDate:(NSDate *)date;
+
+/**
  * Asks the dataSource whether days should be higlighted for specific week.
  */
 - (BOOL)calendar:(FSCalendar *)calendar higlightDaysFor:(NSUInteger)weekOfYear;

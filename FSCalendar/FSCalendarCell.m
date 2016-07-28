@@ -320,10 +320,12 @@
         if (!CGColorEqualToColor(_shapeLayer.strokeColor, cellBorderColor)) {
             _shapeLayer.strokeColor = cellBorderColor;
         }
-        
     }
     
-    if (![_image isEqual:_imageView.image]) {
+    BOOL selectedStateImageChanged = ((self.dateIsSelected || self.isSelected) && ![_selectedStateImage isEqual:_imageView.image]);
+    BOOL normalStateImageChanged = ![_image isEqual:_imageView.image] ;
+    
+    if (selectedStateImageChanged || normalStateImageChanged) {
         [self invalidateImage];
     }
     
@@ -417,8 +419,15 @@
 
 - (void)invalidateImage
 {
-    _imageView.image = _image;
-    _imageView.hidden = !_image;
+    if ((self.dateIsSelected || self.isSelected) && _selectedStateImage){
+        _imageView.image = _selectedStateImage;
+        _imageView.hidden = NO;
+    }else if (_image) {
+        _imageView.image = _image;
+        _imageView.hidden = NO;
+    }else {
+        _imageView.hidden = YES;
+    }
 }
 
 #pragma mark - Properties

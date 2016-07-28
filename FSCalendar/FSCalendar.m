@@ -1681,6 +1681,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     cell.calendar = self;
     cell.date = [self dateForIndexPath:indexPath];
     cell.image = [self imageForDate:cell.date];
+    cell.selectedStateImage = [self selectedStateImageForDate:cell.date];
     cell.numberOfEvents = [self numberOfEventsForDate:cell.date];
     cell.title = [self titleForDate:cell.date];
     cell.subtitle  = [self subtitleForDate:cell.date];
@@ -2103,6 +2104,14 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 {
     if (_dataSource && [_dataSource respondsToSelector:@selector(calendar:imageForDate:)]) {
         return [_dataSource calendar:self imageForDate:date];
+    }
+    return nil;
+}
+
+- (UIImage *)selectedStateImageForDate:(NSDate *)date
+{
+    if (_dataSource && [_dataSource respondsToSelector:@selector(calendar:selectedStateImageForDate:)]) {
+        return [_dataSource calendar:self selectedStateImageForDate:date];
     }
     return nil;
 }

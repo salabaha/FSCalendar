@@ -35,6 +35,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarCellWeekLineMode) {
 @property (strong, nonatomic) NSString *title;
 @property (strong, nonatomic) NSString *subtitle;
 @property (strong, nonatomic) UIImage  *image;
+@property (strong, nonatomic) UIImage  *selectedStateImage;
 
 @property (assign, nonatomic) BOOL needsAdjustingViewFrame;
 @property (assign, nonatomic) NSInteger numberOfEvents;
