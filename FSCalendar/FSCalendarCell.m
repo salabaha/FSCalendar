@@ -321,13 +321,8 @@
             _shapeLayer.strokeColor = cellBorderColor;
         }
     }
-    
-    BOOL selectedStateImageChanged = ((self.dateIsSelected || self.isSelected) && ![_selectedStateImage isEqual:_imageView.image]);
-    BOOL normalStateImageChanged = ![_image isEqual:_imageView.image] ;
-    
-    if (selectedStateImageChanged || normalStateImageChanged) {
-        [self invalidateImage];
-    }
+
+    [self invalidateImage];
     
     if (_eventIndicator.hidden == (_numberOfEvents > 0)) {
         _eventIndicator.hidden = !_numberOfEvents;
