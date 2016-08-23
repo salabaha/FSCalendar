@@ -111,9 +111,8 @@
 
 -(CGRect)weekLinePathFrameForMode:(FSCalendarCellWeekLineMode) mode
 {
-    
     CGFloat offset = 5.0;
-    CGRect frame = self.contentView.frame;
+    CGRect frame = self.contentView.bounds;
     frame.size.width += 1;
     
     if (self.appearance.weekLineHeight == FSCalendarAutomaticDimension) {
@@ -190,6 +189,7 @@
     CGFloat titleHeight = self.bounds.size.height*5.0/6.0;
     CGFloat diameter = MIN(self.bounds.size.height*5.0/6.0,self.bounds.size.width);
     diameter = diameter > FSCalendarStandardCellDiameter ? (diameter - (diameter-FSCalendarStandardCellDiameter)*0.5) : diameter;
+    diameter += 4;
     _shapeLayer.frame = CGRectMake((self.bounds.size.width-diameter)/2,
                                    (titleHeight-diameter)/2,
                                    diameter,
@@ -440,6 +440,10 @@
     if (self.dateIsSelected || self.isSelected) {
         return self.preferredTitleSelectionColor ?: [self colorForCurrentStateInDictionary:_appearance.titleColors];
     }
+    if (self.dateIsPlaceholder) {
+        return _appearance.titlePlaceholderColor ?: [self colorForCurrentStateInDictionary:_appearance.titleColors];
+    }
+    
     return self.preferredTitleDefaultColor ?: [self colorForCurrentStateInDictionary:_appearance.titleColors];
 }
 
