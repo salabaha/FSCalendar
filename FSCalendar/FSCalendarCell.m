@@ -122,7 +122,7 @@
         frame.size.height = self.appearance.weekLineHeight;
     }
     
-    frame.origin.y = (self.contentView.center.y) - (frame.size.height / 2) - 4;
+    frame.origin.y = (self.contentView.fs_height*5.0/6.0-frame.size.height)*0.5;
     
     switch (mode) {
         case FSCalendarCellWeekLineModeLeft:
