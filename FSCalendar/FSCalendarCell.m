@@ -198,7 +198,7 @@
     _shapeLayer.borderColor = [UIColor clearColor].CGColor;
     
     CGFloat eventSize = _shapeLayer.frame.size.height/6.0;
-    _eventIndicator.frame = CGRectMake(0, CGRectGetMaxY(_shapeLayer.frame)+eventSize*0.17, self.contentView.bounds.size.width, eventSize*0.83);
+    _eventIndicator.frame = CGRectMake(0 + self.preferredEventOffset.x, CGRectGetMaxY(_shapeLayer.frame)+eventSize*0.17 + self.preferredEventOffset.y , self.contentView.bounds.size.width, eventSize*0.83);
     _eventIndicator.numberOfEvents = self.numberOfEvents;
     _eventIndicator.color = self.colorsForEvents;
 
