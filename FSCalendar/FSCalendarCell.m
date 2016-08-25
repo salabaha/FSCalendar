@@ -236,7 +236,8 @@
                 self.contentView.hidden = (currentLine>lineCount);
             }
         }
-    } else {
+    } else if (self.contentView.hidden) {
+        self.needsAdjustingViewFrame = YES;
         self.contentView.hidden = NO;
     }
     
@@ -476,30 +477,37 @@
     return _preferredCellShape ?: _appearance.cellShape;
 }
 
-- (CGPoint)preferredTitleOffset
-{
-    return CGPointEqualToPoint(_preferredTitleOffset, CGPointZero) ? _appearance.titleOffset : _preferredTitleOffset;
+#define OFFSET_PROPERTY(NAME,CAPITAL,ALTERNATIVE) \
+\
+@synthesize NAME = _##NAME; \
+\
+- (void)set##CAPITAL:(CGPoint)NAME \
+{ \
+    BOOL diff = !CGPointEqualToPoint(NAME, self.NAME); \
+    _##NAME = NAME; \
+    if (diff) { \
+        _needsAdjustingViewFrame = YES; \
+        [self setNeedsLayout]; \
+    } \
+} \
+\
+- (CGPoint)NAME \
+{ \
+    return CGPointEqualToPoint(_##NAME, CGPointZero) ? ALTERNATIVE : _##NAME; \
 }
 
-- (CGPoint)preferredSubtitleOffset
-{
-    return CGPointEqualToPoint(_preferredSubtitleOffset, CGPointZero) ? _appearance.subtitleOffset : _preferredSubtitleOffset;
-}
-
-- (CGPoint)preferredImageOffset
-{
-    return CGPointEqualToPoint(_preferredImageOffset, CGPointZero) ? _appearance.imageOffset : _preferredImageOffset;
-}
+OFFSET_PROPERTY(preferredTitleOffset, PreferredTitleOffset, _appearance.titleOffset);
+OFFSET_PROPERTY(preferredSubtitleOffset, PreferredSubtitleOffset, _appearance.subtitleOffset);
+OFFSET_PROPERTY(preferredImageOffset, PreferredImageOffset, _appearance.imageOffset);
+OFFSET_PROPERTY(preferredEventOffset, PreferredEventOffset, _appearance.eventOffset);
 
 - (CGSize)preferredImageSize
 {
     return CGSizeEqualToSize(_preferredImageSize, CGSizeZero) ? _appearance.imageSize : _preferredImageSize;
 }
 
-- (CGPoint)preferredEventOffset
-{
-    return CGPointEqualToPoint(_preferredEventOffset, CGPointZero) ? _appearance.eventOffset : _preferredEventOffset;
-}
+#undef OFFSET_PROPERTY
+//>>>>>>> f59999b50ff7133da8d81ec7c4991f21887e3ecd
 
 - (void)setCalendar:(FSCalendar *)calendar
 {
@@ -521,9 +529,10 @@
 - (void)setSubtitle:(NSString *)subtitle
 {
     if (![_subtitle isEqualToString:subtitle]) {
-        _needsAdjustingViewFrame = !(_subtitle.length && subtitle.length);
+        BOOL diff = (subtitle.length && !_subtitle.length) || (_subtitle.length && !subtitle.length);
         _subtitle = subtitle;
-        if (_needsAdjustingViewFrame) {
+        if (diff) {
+            _needsAdjustingViewFrame = YES;
             [self setNeedsLayout];
         }
     }

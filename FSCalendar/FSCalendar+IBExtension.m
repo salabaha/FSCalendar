@@ -51,7 +51,7 @@
 
 - (void)setEventSelectionColor:(UIColor *)eventSelectionColor
 {
-    self.eventSelectionColor = eventSelectionColor;
+    self.appearance.eventSelectionColor = eventSelectionColor;
 }
 
 - (UIColor *)eventSelectionColor
