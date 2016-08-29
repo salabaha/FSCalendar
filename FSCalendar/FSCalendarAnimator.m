@@ -503,26 +503,7 @@
 
 - (CGRect)boundingRectForScope:(FSCalendarScope)scope page:(NSDate *)page
 {
-    CGSize contentSize;
-    switch (scope) {
-        case FSCalendarScopeMonth: {
-            if (self.calendar.placeholderType == FSCalendarPlaceholderTypeFillSixRows) {
-                contentSize = self.cachedMonthSize;
-            } else {
-                contentSize = CGSizeMake(self.calendar.fs_width,
-                                         self.calendar.preferredHeaderHeight+
-                                         self.calendar.preferredWeekdayHeight+
-                                         self.calendar.preferredPadding*2+
-                                         ([self.calendar numberOfRowsInMonth:page]*self.calendar.preferredRowHeight)+
-                                         self.calendar.scopeHandle.fs_height);
-            }
-            break;
-        }
-        case FSCalendarScopeWeek: {
-            contentSize = [self.calendar sizeThatFits:self.calendar.frame.size scope:scope];
-            break;
-        }
-    }
+    CGSize contentSize = [self.calendar sizeThatFits:self.calendar.frame.size scope:scope];
     return (CGRect){CGPointZero,contentSize};
 }
 
