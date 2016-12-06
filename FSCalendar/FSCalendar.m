@@ -177,7 +177,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     _components = [[NSDateComponents alloc] init];
     _formatter = [[NSDateFormatter alloc] init];
     _locale = [NSLocale currentLocale];
-    _timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+    _timeZone = [NSTimeZone localTimeZone];
     _firstWeekday = 1;
     [self invalidateDateTools];
     
@@ -1190,7 +1190,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 
 - (void)selectDate:(NSDate *)date scrollToDate:(BOOL)scrollToDate forPlaceholder:(BOOL)forPlaceholder
 {
-    if (!self.allowsSelection) {
+    if (!self.allowsSelection && !_supressEvent) {
         return;
     }
     [self requestBoundingDatesIfNecessary];
@@ -1203,6 +1203,14 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     NSIndexPath *targetIndexPath = [self indexPathForDate:targetDate];
     
     BOOL shouldSelect = !_supressEvent;
+    
+    if (scrollToDate) {
+        // 如果跨月份点击日期，并且该日期不应该选中，则不跳转页面，其他情况均跳转
+        if (!forPlaceholder && shouldSelect) {
+            [self scrollToPageForDate:targetDate animated:NO];
+        }
+    }
+    
     // 跨月份点击
     if (forPlaceholder) {
         if (self.allowsMultipleSelection) {
@@ -1255,14 +1263,6 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     } else if (![_collectionView.indexPathsForSelectedItems containsObject:targetIndexPath]) {
         // 调用代码选中已选中日期
         [_collectionView selectItemAtIndexPath:targetIndexPath animated:NO scrollPosition:UICollectionViewScrollPositionNone];
-    }
-    
-    if (scrollToDate) {
-        // 如果跨月份点击日期，并且该日期不应该选中，则不跳转页面，其他情况均跳转
-        if (forPlaceholder && !shouldSelect) {
-            return;
-        }
-        [self scrollToPageForDate:targetDate animated:YES];
     }
 }
 
