@@ -2090,9 +2090,8 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 
 - (BOOL)higlightWeekForDate:(NSDate *)date
 {
-    if (_dataSource && [_dataSource respondsToSelector:@selector(calendar:higlightDaysFor:)]) {
-        NSUInteger weekOfYear = [[[self calendar] components:NSCalendarUnitWeekOfYear fromDate:date] weekOfYear];
-        return [_dataSource calendar:self higlightDaysFor:weekOfYear];
+    if (_dataSource && [_dataSource respondsToSelector:@selector(calendar:higlightWeekOfYearFor:)]) {
+        return [_dataSource calendar:self higlightWeekOfYearFor:date];
     }
     return NO;
 }

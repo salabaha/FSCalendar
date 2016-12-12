@@ -86,7 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Asks the dataSource whether days should be higlighted for specific week.
  */
-- (BOOL)calendar:(FSCalendar *)calendar higlightDaysFor:(NSUInteger)weekOfYear;
+- (BOOL)calendar:(FSCalendar *)calendar higlightWeekOfYearFor:(NSDate *)date;
 
 /**
  * Asks the dataSource the minimum date to display.
