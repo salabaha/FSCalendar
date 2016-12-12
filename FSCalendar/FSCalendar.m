@@ -1190,9 +1190,10 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 
 - (void)selectDate:(NSDate *)date scrollToDate:(BOOL)scrollToDate forPlaceholder:(BOOL)forPlaceholder
 {
-    if (!self.allowsSelection && !_supressEvent) {
+    if (!self.allowsSelection && !_supressEvent || (self.animator.transition == FSCalendarTransitionMonthToWeek && self.animator.state == FSCalendarTransitionStateInProgress)) {
         return;
     }
+
     [self requestBoundingDatesIfNecessary];
     if ([self daysFromDate:_minimumDate toDate:date] < 0) {
         date = _minimumDate.copy;
