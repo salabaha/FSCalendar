@@ -1742,19 +1742,17 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 - (void)deselectCounterpartDate:(NSDate *)date
 {
     if (_placeholderType == FSCalendarPlaceholderTypeNone) return;
-    if (self.floatingMode) {
-        FSCalendarCell *cell = [_collectionView.visibleCells filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(FSCalendarCell *  _Nonnull evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
-            return evaluatedObject.dateIsPlaceholder && evaluatedObject.dateIsSelected;
-        }]].firstObject;
+
+    // fix a deselection problem
+    FSCalendarCell *cell = [_collectionView.visibleCells filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(FSCalendarCell *  _Nonnull evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
+        return evaluatedObject.dateIsSelected || evaluatedObject.selected;
+    }]].firstObject;
+
+    if (cell) {
+        NSIndexPath *indexPath = [self.collectionView indexPathForCell:cell];
+        [_collectionView deselectItemAtIndexPath:indexPath animated:NO];
+        cell.selected = NO;
         cell.dateIsSelected = NO;
-        [_collectionView deselectItemAtIndexPath:[_collectionView indexPathForCell:cell] animated:NO];
-        [cell setNeedsLayout];
-    } else {
-        FSCalendarCell *cell = [_collectionView.visibleCells filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(FSCalendarCell *  _Nonnull evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
-            return evaluatedObject.dateIsPlaceholder && [self isDate:evaluatedObject.date equalToDate:date toCalendarUnit:FSCalendarUnitDay] && evaluatedObject.dateIsSelected;
-        }]].firstObject;
-        cell.dateIsSelected = NO;
-        [_collectionView deselectItemAtIndexPath:[_collectionView indexPathForCell:cell] animated:NO];
         [cell setNeedsLayout];
     }
 }
